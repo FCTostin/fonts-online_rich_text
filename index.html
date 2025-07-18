@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Factorio Font КОД-ГЕНЕРАТОР</title>
+  <meta name="viewport" content="width=600, initial-scale=1">
+  <style>
+    :root {
+      --factorio-light-header: #e9d0ad;
+      --factorio-dark-panel: #23211a;
+      --factorio-border: #000;
+      --factorio-header-border: #4b3b1c;
+      --factorio-title: #1d1208;
+      --factorio-subtext: #d6d6d6;
+      --factorio-orange: #ffc53a;
+      --factorio-bright: #fff8e1;
+      --factorio-code-bg: #e9d0ad;
+      --factorio-code-dim: #b1a48a;
+      --factorio-blue: #4689e0;
+      --factorio-red: #e04b4b;
+      --factorio-button: #4689e0;
+      --factorio-button-active: #ffc53a;
+      --factorio-copy-success: #5fcf87;
+      --error: #ff3c3c;
+      --font-palette-bg: #828282;
+      --font-palette-border: #a7987b;
+      --select-focus: #ffc53a;
+    }
+    body {
+      background: #e9d0ad url("https://i.ibb.co/39K7GFn6/nuclear-ground.png") repeat;
+      margin: 0;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      min-height: 100vh;
+      transition: background-position 0.13s cubic-bezier(.7,0,.35,1);
+    }
+    .factorio-window {
+      margin: 24px auto 0 auto;
+      max-width: 650px;
+      box-shadow: 0 2px 22px #000a;
+      border-radius: 10px;
+      background: var(--factorio-dark-panel);
+      border: 2px solid var(--factorio-border);
+      position: relative;
+    }
+    .factorio-header {
+      padding: 10px 18px 7px 18px;
+      background: var(--factorio-light-header);
+      border-radius: 8px 8px 0 0;
+      border-bottom: 2px solid var(--factorio-header-border);
+      font-size: 1.18em;
+      font-weight: bold;
+      color: var(--factorio-title);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      box-sizing: border-box;
+      letter-spacing: 0.4px;
+      text-shadow: 0 1px 0 #fff5;
+      position: relative;
+      z-index: 2;
+    }
+    .factorio-header .factorio-by {
+      font-size: 1em;
+      color: #e04b4b;
+      font-weight: bold;
+      text-shadow: none;
+      margin-left: 7px;
+      letter-spacing: 0.2px;
+      font-family: inherit;
+    }
+    .lang-select-container {
+  position: fixed;
+  top: 15px;
+  right: 22px;
+  z-index: 100;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+@media (max-width: 700px) {
+  .lang-select-container {
+    right: 8px;
+    top: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .lang-select-container {
+    right: 2vw;
+    top: 5px;
+  }
+}
+    .lang-dropdown {
+      appearance: none;
+      border: 1.5px solid #b1a48a;
+      border-radius: 6px;
+      background: #f9e7c7;
+      color: #3c2d18;
+      font-size: 0.98em;
+      padding: 6px 25px 6px 14px;
+      font-family: inherit;
+      cursor: pointer;
+      min-width: 68px;
+      box-shadow: 0 1px 3px #0001;
+      transition: border 0.18s;
+    }
+    .lang-dropdown:focus {
+      border-color: var(--select-focus);
+      outline: none;
+    }
+    .lang-select-icon {
+      font-size: 1.13em;
+      margin-right: -21px;
+      margin-left: 2px;
+      color: #b1a48a;
+      pointer-events: none;
+      position: relative;
+      left: -22px;
+      top: 1px;
+    }
+    .factorio-content {
+      border-radius: 0 0 10px 10px;
+      background: var(--factorio-dark-panel);
+      padding: 22px 24px 40px 24px;
+      border-top: 1px solid #3b2d15;
+      box-sizing: border-box;
+      color: var(--factorio-subtext);
+      font-size: 1.08em;
+      min-height: 200px;
+      box-shadow: 0 1px 8px #0003 inset;
+    }
+    .factorio-label {
+      color: var(--factorio-bright);
+      font-size: 1.04em;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: block;
+      text-align: left;
+      font-weight: 500;
+      text-shadow: 0 1px 2px #0006;
+    }
+    textarea {
+      width: 100%;
+      min-height: 58px;
+      max-height: 180px;
+      resize: vertical;
+      font-size: 1.12em;
+      padding: 12px;
+      background: #22201a;
+      border: 2px solid #82704c;
+      border-radius: 8px;
+      color: var(--factorio-bright);
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      font-family: inherit;
+      transition: border 0.18s, box-shadow 0.18s;
+      outline: none;
+      box-shadow: 0 1px 6px #0002;
+    }
+    textarea:focus {
+      border-color: var(--factorio-orange);
+      box-shadow: 0 2px 15px #0005;
+    }
+    .factorio-row-center {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 15px;
+      margin-bottom: 13px;
+    }
+    .factorio-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .factorio-col label {
+      margin-bottom: 7px;
+      margin-top: 0;
+      text-align: center;
+      width: 100%;
+      color: var(--factorio-bright);
+    }
+    .font-select-dropdown {
+      width: 100%;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .font-select-btn {
+      width: 100%;
+      padding: 10px 17px;
+      border-radius: 6px;
+      border: 2px solid #82704c;
+      background: #23211a;
+      color: var(--factorio-bright);
+      font-size: 1.07em;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border 0.18s, box-shadow 0.18s;
+      min-height: 44px;
+      box-shadow: 0 1px 4px #0002 inset;
+      position: relative;
+      z-index: 12;
+    }
+    .font-select-btn:focus,
+    .font-select-btn.open {
+      border-color: var(--select-focus);
+      box-shadow: 0 0 6px 1px var(--select-focus);
+      outline: none;
+    }
+    .font-select-btn .font-select-arrow {
+      margin-left: auto;
+      font-size: 1.22em;
+      color: #b1a48a;
+      transition: transform 0.22s;
+      pointer-events: none;
+    }
+    .font-select-btn.open .font-select-arrow {
+      transform: rotate(-180deg);
+    }
+    .font-dropdown-list {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 5px);
+      background: #828282 !important;
+      z-index: 9999 !important;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      max-height: 450px;
+      overflow-y: auto;
+    }
+    .font-dropdown-list.open {
+      display: flex;
+    }
+    .font-thumb-drop {
+      background: none;
+      border: none;
+      padding: 6px 0;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: none;
+      display: flex;
+      justify-content: center;
+      outline: none;
+    }
+    .font-thumb-drop img {
+      width: 96%;
+      height: auto;
+      object-fit: contain;
+      border: none !important;
+      outline: none !important;
+      background: none !important;
+      box-shadow: none !important;
+      border-radius: 0;
+      margin: 0;
+      transition: transform 0.15s;
+    }
+    .font-thumb-drop:hover img {
+      transform: scale(1.03);
+    }
+    .font-thumb-drop.selected img {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px var(--factorio-orange);
+    }
+    .font-thumb-drop:hover img:not(:focus) {
+      border-color: #fff8;
+      background: #f8f8f8;
+    }
+    .color-input {
+      font-size: 1em;
+      padding: 0;
+      border-radius: 6px;
+      border: 2px solid #82704c;
+      background: #262215;
+      color: var(--factorio-bright);
+      outline: none;
+      transition: border 0.18s;
+      width: 100%;
+      height: 44px;
+      cursor: pointer;
+      margin-bottom: 0;
+      box-shadow: 0 1px 4px #0002 inset;
+    }
+    .color-input:focus {
+      border-color: var(--factorio-orange);
+    }
+    .hex-label {
+      font-size: 1em;
+      color: var(--factorio-orange);
+      align-self: center;
+      min-width: 72px;
+      letter-spacing: .7px;
+      user-select: all;
+      text-align: center;
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 0;
+      font-family: "Consolas", "Menlo", "Monaco", monospace;
+    }
+    .factorio-title-block {
+      color: var(--factorio-orange);
+      font-size: 1.09em;
+      font-weight: bold;
+      margin-top: 17px;
+      margin-bottom: 7px;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px #0006;
+    }
+    .code-output-container {
+      background: var(--factorio-code-bg);
+      border-radius: 7px;
+      border: 1.8px solid #55452b;
+      padding: 16px 14px 17px 14px;
+      font-size: 1.18em;
+      position: relative;
+      margin-bottom: 1px;
+      margin-top: 0;
+      min-height: 38px;
+      box-shadow: 0 1px 8px #0003 inset;
+      font-family: "Consolas", "Fira Mono", "Menlo", "Monaco", monospace;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .code-brackets, .code-end {
+      color: var(--factorio-code-dim);
+      opacity: 0.81;
+      font-weight: 600;
+      font-size: 0.98em;
+      transition: color 0.2s;
+      user-select: all;
+    }
+    .code-maintext {
+      font-weight: 500;
+      transition: color 0.2s;
+      user-select: all;
+      color: var(--factorio-code-main);
+      padding: 0 2px;
+    }
+    .code-length {
+      font-size: 1em;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 10px;
+      margin-left: 0;
+      margin-bottom: 0;
+      padding: 2px 10px 2px 0;
+      user-select: none;
+      letter-spacing: 1px;
+      color: var(--factorio-blue);
+      transition: color 0.2s;
+      text-shadow: 0 1px 2px #0006;
+    }
+    .code-length.error {
+      color: var(--error);
+      animation: shake 0.2s 1;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0); }
+    }
+    .copy-btn {
+      background: var(--factorio-button);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 13px 28px 13px 28px;
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 17px;
+      margin-bottom: 3px;
+      cursor: pointer;
+      float: right;
+      box-shadow: 0 1px 6px #0004;
+      transition: background 0.18s, color 0.18s;
+      position: relative;
+      overflow: visible;
+    }
+    .copy-btn:active {
+      background: var(--factorio-button-active);
+      color: #2c2922;
+    }
+    .copy-flyout {
+      position: absolute;
+      right: 22px;
+      top: -34px;
+      background: var(--factorio-copy-success);
+      color: #fff;
+      border-radius: 7px;
+      padding: 4px 17px 4px 15px;
+      font-size: 1em;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 99;
+      transform: translateY(0px) scale(0.98);
+      transition: opacity 0.35s cubic-bezier(.4,2,.6,1), transform 0.28s cubic-bezier(.4,2,.6,1);
+      box-shadow: 0 2px 8px #0004;
+    }
+    .copy-flyout.shown {
+      opacity: 1;
+      transform: translateY(-14px) scale(1.04);
+    }
+    .footer {
+      margin-top: 350px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      text-align: center;
+      font-size: 10px;
+      color: #777;
+    }
+    .footer a {
+      color: var(--factorio-blue);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 700px) {
+      .factorio-window {
+        max-width: 99vw;
+      }
+      .font-thumb-drop img {
+        min-width: 105px;
+        max-width: 99vw;
+        width: 98vw;
+        height: 42px;
+      }
+      .factorio-content {
+        padding: 12px 2vw 16px 2vw;
+      }
+      .lang-select-container {
+        right: 8px;
+      }
+    }
+    @media (max-width: 600px) {
+      .font-thumb-drop img {
+        min-width: 70px;
+        max-width: 99vw;
+        width: 95vw;
+        height: 36px;
+      }
+      .factorio-title-block {
+        font-size: 1em;
+      }
+      .lang-select-container {
+        right: 5px;
+        top: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="factorio-window">
+    <div class="factorio-header">
+      <span id="header-title">Генератор [font] кода</span>
+      <span class="factorio-by" id="header-by">By FCTteam</span>
+      <div class="lang-select-container">
+        <select id="lang-select" class="lang-dropdown" aria-label="Выбор языка">
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+          <option value="uk">Українська</option>
+          <option value="kk">Қазақша</option>
+          <option value="cs">Čeština</option>
+          <option value="nl">Nederlands</option>
+          <option value="sv">Svenska</option>
+          <option value="de">Deutsch</option>
+          <option value="pl">Polski</option>
+          <option value="fr">Français</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+        </select>
+      </div>
+    </div>
+    <div class="factorio-content">
+      <label class="factorio-label" for="text-input" id="label-text">Текст:</label>
+      <textarea id="text-input" maxlength="130" placeholder="Введите ваш текст...">Пример текста</textarea>
+      <div class="factorio-row-center">
+        <div class="factorio-col">
+          <label id="label-font">Шрифт:</label>
+          <div class="font-select-dropdown" id="font-select-dropdown">
+            <button type="button" class="font-select-btn" id="font-select-btn" aria-haspopup="true" aria-expanded="false">
+              <span id="font-btn-label">default-bold</span>
+              <span class="font-select-arrow">&#9662;</span>
+            </button>
+            <div class="font-dropdown-list" id="font-dropdown-list" role="listbox">
+              <!-- JS will fill font thumbs -->
+            </div>
+          </div>
+        </div>
+        <div class="factorio-col">
+          <label for="color-input" id="label-color">Цвет:</label>
+          <input type="color" id="color-input" class="color-input" value="#e04b4b">
+          <span class="hex-label" id="hex-value">#e04b4b</span>
+        </div>
+      </div>
+      <div class="factorio-title-block" id="code-title">Получившейся код:</div>
+      <div class="code-output-container" id="code-visual">
+        <span class="code-brackets" id="code-brackets-start">[color=#e04b4b][font=var]</span>
+        <span class="code-maintext" id="code-maintext" style="color:#e04b4b;">Пример текста</span>
+        <span class="code-end" id="code-brackets-end">[/font][/color]</span>
+      </div>
+      <span class="code-length" id="code-length">54 / 155</span>
+      <button class="copy-btn" id="copy-btn">
+        <span id="copy-btn-txt">Скопировать</span>
+        <span class="copy-flyout" id="copy-flyout">Скопировано!</span>
+      </button>
+    </div>
+  </div>
+  <script>
+    // Тексты на языках
+    const translations = {
+ ru: {
+    lang: "Русский",
+    header: "Генератор [font] кода",
+    by: "By FCTteam",
+    text: "Текст:",
+    placeholder: "Введите ваш текст...",
+    font: "Шрифт:",
+    color: "Цвет:",
+    code: "Получившейся код:",
+    copy: "Скопировать",
+    copied: "Скопировано!"
+  },
+  en: {
+    lang: "English",
+    header: "[font] code generator",
+    by: "By FCTteam",
+    text: "Text:",
+    placeholder: "Enter your text...",
+    font: "Font:",
+    color: "Color:",
+    code: "Generated code:",
+    copy: "Copy",
+    copied: "Copied!"
+  },
+  uk: {
+    lang: "Українська",
+    header: "Генератор [font] коду",
+    by: "Від FCTteam",
+    text: "Текст:",
+    placeholder: "Введіть ваш текст...",
+    font: "Шрифт:",
+    color: "Колір:",
+    code: "Отриманий код:",
+    copy: "Скопіювати",
+    copied: "Скопійовано!"
+  },
+  kk: {
+    lang: "Қазақша",
+    header: "[font] код генераторы",
+    by: "FCTteam жасаған",
+    text: "Мәтін:",
+    placeholder: "Мәтінді енгізіңіз...",
+    font: "Қаріп:",
+    color: "Түс:",
+    code: "Нәтиже коды:",
+    copy: "Көшіріп алу",
+    copied: "Көшірілді!"
+  },
+  cs: {
+    lang: "Čeština",
+    header: "Generátor [font] kódu",
+    by: "By FCTteam",
+    text: "Text:",
+    placeholder: "Zadejte svůj text...",
+    font: "Písmo:",
+    color: "Barva:",
+    code: "Výsledný kód:",
+    copy: "Kopírovat",
+    copied: "Zkopírováno!"
+  },
+  nl: {
+    lang: "Nederlands",
+    header: "[font] codegenerator",
+    by: "By FCTteam",
+    text: "Tekst:",
+    placeholder: "Voer uw tekst in...",
+    font: "Lettertype:",
+    color: "Kleur:",
+    code: "Gegenereerde code:",
+    copy: "Kopiëren",
+    copied: "Gekopieerd!"
+  },
+  sv: {
+    lang: "Svenska",
+    header: "[font] kodgenerator",
+    by: "By FCTteam",
+    text: "Text:",
+    placeholder: "Skriv din text...",
+    font: "Typsnitt:",
+    color: "Färg:",
+    code: "Genererad kod:",
+    copy: "Kopiera",
+    copied: "Kopierat!"
+  },
+  de: {
+    lang: "Deutsch",
+    header: "[font] Code-Generator",
+    by: "Von FCTteam",
+    text: "Text:",
+    placeholder: "Geben Sie Ihren Text ein...",
+    font: "Schriftart:",
+    color: "Farbe:",
+    code: "Erzeugter Code:",
+    copy: "Kopieren",
+    copied: "Kopiert!"
+  },
+  pl: {
+    lang: "Polski",
+    header: "Generator kodu [font]",
+    by: "By FCTteam",
+    text: "Tekst:",
+    placeholder: "Wpisz swój tekst...",
+    font: "Czcionka:",
+    color: "Kolor:",
+    code: "Wygenerowany kod:",
+    copy: "Kopiuj",
+    copied: "Skopiowano!"
+  },
+  fr: {
+    lang: "Français",
+    header: "Générateur de code [font]",
+    by: "Par FCTteam",
+    text: "Texte:",
+    placeholder: "Entrez votre texte...",
+    font: "Police:",
+    color: "Couleur:",
+    code: "Code généré:",
+    copy: "Copier",
+    copied: "Copié !"
+  },
+  zh: {
+    lang: "中文",
+    header: "[font] 代码生成器",
+    by: "By FCTteam",
+    text: "文本：",
+    placeholder: "输入您的文本...",
+    font: "字体：",
+    color: "颜色：",
+    code: "生成的代码：",
+    copy: "复制",
+    copied: "已复制！"
+  },
+  ja: {
+    lang: "日本語",
+    header: "[font] コードジェネレーター",
+    by: "By FCTteam",
+    text: "テキスト：",
+    placeholder: "テキストを入力してください...",
+    font: "フォント：",
+    color: "色：",
+    code: "生成されたコード：",
+    copy: "コピー",
+    copied: "コピーしました！"
+  }
+    };
+
+    // Массив с названиями шрифтов и их изображениями
+    const fonts = [
+      { name: "default", img: "https://i.ibb.co/xqQjF0fX/default.png" },
+      { name: "default-dropdown", img: "https://i.ibb.co/TBHxvbTL/default-dropdown.png" },
+      { name: "default-dialog-button", img: "https://i.ibb.co/WpKCdCYV/default-dialog-button.png" },
+      { name: "default-bold", img: "https://i.ibb.co/nxcXXqW/default-bold.png" },
+      { name: "count-font", img: "https://i.ibb.co/r2GLcj3X/count-font.png" },
+      { name: "compi", img: "https://i.ibb.co/7tvCYXHH/compi.png" },
+      { name: "default-game", img: "https://i.ibb.co/hJS0tT9K/default-game.png" },
+      { name: "default-large", img: "https://i.ibb.co/jZrqgfbt/default-large.png" },
+      { name: "default-large-bold", img: "https://i.ibb.co/Rk8tGSGm/default-large-bold.png" },
+      { name: "default-large-semibold", img: "https://i.ibb.co/vx2cNJ9P/default-large-semibold.png" },
+      { name: "default-listbox", img: "https://i.ibb.co/dwBbhCph/default-listbox.png" },
+      { name: "default-semibold", img: "https://i.ibb.co/Kx3brCGX/default-semibold.png" },
+      { name: "default-small", img: "https://i.ibb.co/qF7MFv1k/default-small.png" },
+      { name: "default-small-bold", img: "https://i.ibb.co/TMCSFrLD/default-small-bold.png" },
+      { name: "default-small-semibold", img: "https://i.ibb.co/bRJnLdgL/default-small-semibold.png" },
+      { name: "default-tiny-bold", img: "https://i.ibb.co/HDt6QZTh/default-tiny-bold.png" },
+      { name: "heading-1", img: "https://i.ibb.co/3yd782NR/heading-1.png" },
+      { name: "heading-2", img: "https://i.ibb.co/tMvxQ4SR/heading-2.png" },
+      { name: "locale-pick", img: "https://i.ibb.co/4wM8xGCG/locale-pick.png" },
+      { name: "scenario-message-dialog", img: "https://i.ibb.co/fdwY8P62/scenario-message-dialog.png" },
+      { name: "technology-slot-level-font", img: "https://i.ibb.co/VWsynPF4/technology-slot-level-font.png" },
+      { name: "var", img: "https://i.ibb.co/sdxr35SB/var.png" }
+    ];
+
+    // DOM elements
+    const textInput = document.getElementById('text-input');
+    const colorInput = document.getElementById('color-input');
+    const hexValue = document.getElementById('hex-value');
+    const codeMain = document.getElementById('code-maintext');
+    const codeBracketsStart = document.getElementById('code-brackets-start');
+    const codeBracketsEnd = document.getElementById('code-brackets-end');
+    const codeLength = document.getElementById('code-length');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyFlyout = document.getElementById('copy-flyout');
+
+    // font dropdown
+    const fontDropdown = document.getElementById('font-select-dropdown');
+    const fontBtn = document.getElementById('font-select-btn');
+    const fontBtnLabel = document.getElementById('font-btn-label');
+    const fontDropdownList = document.getElementById('font-dropdown-list');
+    // language
+    const langSelect = document.getElementById('lang-select');
+    // translatable elements
+    const labelText = document.getElementById('label-text');
+    const labelFont = document.getElementById('label-font');
+    const labelColor = document.getElementById('label-color');
+    const codeTitle = document.getElementById('code-title');
+    const copyBtnTxt = document.getElementById('copy-btn-txt');
+    const headerTitle = document.getElementById('header-title');
+    const headerBy = document.getElementById('header-by');
+
+    let selectedFont = fonts[3].name; // default-bold
+    let currentLang = 'ru';
+
+    function renderFontDropdown() {
+      fontDropdownList.innerHTML = '';
+      fonts.forEach(f => {
+        const btn = document.createElement('button');
+        btn.type = "button";
+        btn.className = "font-thumb-drop" + (f.name === selectedFont ? " selected" : "");
+        btn.setAttribute("data-font", f.name);
+        btn.tabIndex = 0;
+        btn.innerHTML = `<img src="${f.img}" alt="${f.name}">`;
+        btn.onclick = () => {
+          selectedFont = f.name;
+          updateFontBtn();
+          closeFontDropdown();
+          updateCode();
+        };
+        btn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            btn.click();
+            e.preventDefault();
+          }
+        });
+        fontDropdownList.appendChild(btn);
+      });
+    }
+    renderFontDropdown();
+
+    function updateFontBtn() {
+      fontBtnLabel.textContent = selectedFont;
+      fontDropdownList.querySelectorAll('.font-thumb-drop').forEach(el => {
+        el.classList.toggle('selected', el.getAttribute('data-font') === selectedFont);
+      });
+    }
+
+    function openFontDropdown() {
+      fontDropdownList.classList.add('open');
+      fontBtn.classList.add('open');
+      fontBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closeFontDropdown() {
+      fontDropdownList.classList.remove('open');
+      fontBtn.classList.remove('open');
+      fontBtn.setAttribute('aria-expanded', 'false');
+    }
+    fontBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (fontDropdownList.classList.contains('open')) {
+        closeFontDropdown();
+      } else {
+        openFontDropdown();
+      }
+    });
+    document.addEventListener('click', function(e){
+      if (!fontDropdown.contains(e.target)) closeFontDropdown();
+    });
+    fontBtn.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        fontBtn.click();
+      }
+      if (e.key === 'ArrowDown' && fontDropdownList.classList.contains('open')) {
+        e.preventDefault();
+        const first = fontDropdownList.querySelector('button');
+        first && first.focus();
+      }
+    });
+    fontDropdownList.addEventListener('keydown', function(e){
+      const items = Array.from(fontDropdownList.querySelectorAll('button'));
+      let idx = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (idx < items.length-1) items[idx+1].focus();
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (idx > 0) items[idx-1].focus();
+        else fontBtn.focus();
+      }
+      if (e.key === 'Escape') {
+        closeFontDropdown();
+        fontBtn.focus();
+      }
+    });
+
+    function updateCode() {
+      const font = selectedFont;
+      const color = colorInput.value.toLowerCase();
+      const text = textInput.value;
+      hexValue.textContent = color;
+      let code = `[color=${color}][font=${font}]${text}[/font][/color]`;
+      codeBracketsStart.textContent = `[color=${color}][font=${font}]`;
+      codeBracketsEnd.textContent = `[/font][/color]`;
+      codeMain.textContent = text || ' ';
+      codeMain.style.color = color;
+      codeLength.textContent = `${code.length} / 155`;
+      if (code.length > 155) {
+        codeLength.classList.add('error');
+      } else {
+        codeLength.classList.remove('error');
+      }
+    }
+
+    function copyCode() {
+      const font = selectedFont;
+      const color = colorInput.value.toLowerCase();
+      const text = textInput.value;
+      const code = `[color=${color}][font=${font}]${text}[/font][/color]`;
+      navigator.clipboard.writeText(code);
+      copyFlyout.classList.add('shown');
+      copyBtn.style.background = 'var(--factorio-copy-success)';
+      copyBtn.style.color = '#fff';
+      setTimeout(() => {
+        copyFlyout.classList.remove('shown');
+        copyBtn.style.background = 'var(--factorio-button)';
+        copyBtn.style.color = '#fff';
+      }, 1100);
+    }
+
+    textInput.addEventListener('input', updateCode);
+    colorInput.addEventListener('input', updateCode);
+    copyBtn.addEventListener('click', copyCode);
+
+    // --- Фон смещается в зависимости от положения курсора ---
+    let lastX = 0, lastY = 0;
+    document.addEventListener('mousemove', function(e) {
+      // Расположение курсора относительно окна
+      const x = Math.round(e.clientX / window.innerWidth * 5) - 1;
+      const y = Math.round(e.clientY / window.innerHeight * 5) - 1;
+      if (x !== lastX || y !== lastY) {
+        document.body.style.backgroundPosition = `${x*1}px ${y*1}px`;
+        lastX = x; lastY = y;
+      }
+    });
+
+    // Языковое переключение
+    function setLang(lang) {
+      currentLang = lang;
+      // Переводы
+      headerTitle.textContent = translations[lang].header;
+      headerBy.textContent = translations[lang].by;
+      labelText.textContent = translations[lang].text;
+      labelFont.textContent = translations[lang].font;
+      labelColor.textContent = translations[lang].color;
+      codeTitle.textContent = translations[lang].code;
+      copyBtnTxt.textContent = translations[lang].copy;
+      copyFlyout.textContent = translations[lang].copied;
+      textInput.placeholder = translations[lang].placeholder;
+      // Изменяем значение по умолчанию для textarea если оно не изменено
+      // (Для первого раза и для пустого текстового поля)
+      if (
+        (lang === "en" && (textInput.value === "Пример текста" || textInput.value === "Приклад тексту"))
+      ) {
+        textInput.value = "Sample text";
+        updateCode();
+      }
+      if (
+        (lang === "uk" && (textInput.value === "Пример текста" || textInput.value === "Sample text"))
+      ) {
+        textInput.value = "Приклад тексту";
+        updateCode();
+      }
+      if (
+        (lang === "ru" && (textInput.value === "Sample text" || textInput.value === "Приклад тексту"))
+      ) {
+        textInput.value = "Пример текста";
+        updateCode();
+      }
+      updateCode();
+    }
+
+    langSelect.addEventListener("change", function() {
+      setLang(this.value);
+    });
+
+    // Initial
+    updateFontBtn();
+    updateCode();
+    setLang('ru');
+  </script>
+<div class="footer">
+  <p>🐞 <a href="https://www.youtube.com/@FCT-Ostin" target="_blank">YouTube</a></p>
+  <p>💙 <a href="https://t.me/FCTostin" target="_blank">Telegram</a></p>
+  <p>🎮 <a href="https://steamcommunity.com/groups/FCTgroup" target="_blank">Steam Group</a></p>
+  <p>🕹 <a href="https://www.patreon.com/c/OstinFCT" target="_blank">Patreon</a></p>
+  <p>🪐 <a href="https://boosty.to/ostinfct" target="_blank">Boosty</a></p>
+  <p>Создано при поддержке Телеграм сообщества FCTostin</p>
+</div>
+</body>
+</html>
